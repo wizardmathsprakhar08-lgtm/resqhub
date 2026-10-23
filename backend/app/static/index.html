@@ -306,6 +306,10 @@
           <label class="block text-slate-300 font-medium mb-1">Primary Recipient Name</label>
           <input id="modalName" type="text" value="Emergency Guardian" class="w-full bg-[#112240] border border-[#1E3A5F] rounded-lg p-2.5 text-slate-200">
         </div>
+        <div>
+          <label class="block text-slate-300 font-medium mb-1">API Authentication Key</label>
+          <input id="modalApiKey" type="text" value="resqhub-development-api-key" class="w-full bg-[#112240] border border-[#1E3A5F] rounded-lg p-2.5 text-slate-200">
+        </div>
       </div>
 
       <div class="pt-2 flex justify-end space-x-3">
@@ -357,9 +361,17 @@
       }
     }
 
+    function getAuthHeaders() {
+      const apiKey = document.getElementById('modalApiKey')?.value || 'resqhub-development-api-key';
+      return {
+        'Content-Type': 'application/json',
+        'X-API-Key': apiKey
+      };
+    }
+
     async function checkTwilio() {
       try {
-        const res = await fetch('/api/v1/alerts/diagnostics/sms');
+        const res = await fetch('/api/v1/alerts/diagnostics/sms', { headers: getAuthHeaders() });
         if (res.ok) {
           const data = await res.json();
           const twilioMode = data.mock_mode ? 'Mock Provider' : 'Twilio Live';
@@ -374,7 +386,7 @@
     // Alerts Management
     async function fetchAlerts() {
       try {
-        const res = await fetch('/api/v1/alerts?limit=25');
+        const res = await fetch('/api/v1/alerts?limit=25', { headers: getAuthHeaders() });
         if (!res.ok) throw new Error('Failed to load');
         const data = await res.json();
         renderAlerts(data.items || []);
@@ -489,10 +501,14 @@
 
     async function resolveAlert(alertId) {
       if (!confirm('Mark this emergency alert as resolved?')) return;
+      const apiKey = document.getElementById('modalApiKey')?.value || 'resqhub-development-api-key';
       try {
         const res = await fetch(`/api/v1/alerts/${alertId}/resolve`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey
+          },
           body: JSON.stringify({ resolution_notes: 'Resolved via ResQHub Web Command Center' })
         });
         if (res.ok) {
@@ -556,15 +572,28 @@
         ]
       };
 
+      const apiKey = document.getElementById('modalApiKey')?.value || 'resqhub-development-api-key';
+
       try {
         const res = await fetch('/api/v1/alerts', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey
+          },
           body: JSON.stringify(payload)
         });
         if (res.ok) {
+          const alertData = await res.json();
           closeSosModal();
-          fetchAlerts();
+          await fetchAlerts();
+          const recipientStatus = alertData.recipients?.[0]?.delivery_status || alertData.status;
+          const errorMsg = alertData.recipients?.[0]?.error_message;
+          if (alertData.status === 'failed' && errorMsg) {
+            alert(`⚠️ Emergency Alert Dispatched to Ledger!\nStatus: ${recipientStatus.toUpperCase()}\n\nNote: ${errorMsg}\n\nTip: For tests with dummy numbers, enable MOCK_SMS_PROVIDER=true in environment.`);
+          } else {
+            alert(`🚨 Emergency Alert Dispatched Successfully!\nAlert ID: ${alertData.id}\nStatus: ${alertData.status.toUpperCase()}`);
+          }
         } else {
           const err = await res.json();
           alert('Dispatch failed: ' + (err.detail || JSON.stringify(err)));

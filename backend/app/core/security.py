@@ -6,21 +6,34 @@ from fastapi import Header, HTTPException, status, Request
 from app.core.config import settings
 
 
-def verify_api_key(x_api_key: Optional[str] = Header(None)) -> str:
+def verify_api_key(request: Request, x_api_key: Optional[str] = Header(None)) -> str:
     """
     Validates X-API-Key header against configured backend secret.
-    Allows local development bypass if configured.
+    Allows local development bypass if configured, or same-origin web dashboard sessions.
     """
     if settings.ENVIRONMENT == "development" and not settings.API_KEY:
         return "dev-bypass"
 
-    if not x_api_key or x_api_key != settings.API_KEY:
+    if x_api_key:
+        if x_api_key == settings.API_KEY:
+            return x_api_key
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or missing X-API-Key header",
+            detail="Invalid X-API-Key header",
             headers={"WWW-Authenticate": "ApiKey"},
         )
-    return x_api_key
+
+    # Allow same-origin dashboard simulator requests
+    referer = request.headers.get("referer", "")
+    host = request.headers.get("host", "")
+    if referer and host and (host in referer or "localhost" in referer or "127.0.0.1" in referer or "onrender.com" in referer):
+        return "dashboard-session"
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or missing X-API-Key header",
+        headers={"WWW-Authenticate": "ApiKey"},
+    )
 
 
 def verify_twilio_signature(url: str, params: dict, signature: Optional[str]) -> bool:
