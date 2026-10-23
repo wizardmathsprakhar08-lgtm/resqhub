@@ -1,0 +1,68 @@
+import { HelplineItem } from '../../types';
+
+export const EMERGENCY_HELPLINES: HelplineItem[] = [
+  {
+    id: 'erSS-112',
+    title: 'National Emergency Helpline',
+    number: '112',
+    category: 'general',
+    description: 'Unified emergency response service across India for police, fire, and ambulance.',
+    icon: 'shield-alert',
+  },
+  {
+    id: 'police-100',
+    title: 'Police Control Room',
+    number: '100',
+    category: 'police',
+    description: 'Direct dispatch for immediate crime, threat, or public safety intervention.',
+    icon: 'police-badge',
+  },
+  {
+    id: 'ambulance-108',
+    title: 'Medical Ambulance (EMRI)',
+    number: '108',
+    category: 'medical',
+    description: 'Emergency medical response, paramedical assistance, and patient transport.',
+    icon: 'ambulance',
+  },
+  {
+    id: 'fire-101',
+    title: 'Fire & Rescue Service',
+    number: '101',
+    category: 'fire',
+    description: 'Firefighting brigades, entrapment rescue, and building hazards.',
+    icon: 'fire-truck',
+  },
+  {
+    id: 'disaster-1078',
+    title: 'Disaster Management (NDMA)',
+    number: '1078',
+    category: 'disaster',
+    description: 'National disaster response authority for floods, cyclones, and earthquakes.',
+    icon: 'weather-hurricane',
+  },
+  {
+    id: 'gas-1906',
+    title: 'LPG Gas Leakage Helpline',
+    number: '1906',
+    category: 'utility',
+    description: 'Emergency response line for domestic and commercial LPG leaks.',
+    icon: 'gas-cylinder',
+  },
+  {
+    id: 'women-1091',
+    title: 'Women in Distress Helpline',
+    number: '1091',
+    category: 'police',
+    description: '24/7 emergency support, protection, and crisis intervention for women.',
+    icon: 'account-alert',
+  },
+  {
+    id: 'child-1098',
+    title: 'Childline Emergency',
+    number: '1098',
+    category: 'general',
+    description: 'Emergency care, shelter, and rescue for children in distress.',
+    icon: 'human-child',
+  },
+];

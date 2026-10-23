@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  resqhub-backend:
+    build: .
+    container_name: resqhub-command-center
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME=ResQHub Emergency Platform
+      - API_V1_STR=/api/v1
+      - MOCK_SMS_PROVIDER=true
+      - ALLOWED_ORIGINS=*
+    volumes:
+      - resqhub-data:/app
+    restart: unless-stopped
+
+volumes:
+  resqhub-data:
