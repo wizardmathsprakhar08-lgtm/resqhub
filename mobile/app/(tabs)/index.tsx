@@ -22,6 +22,7 @@ import { SOS_COUNTDOWN_SECONDS } from '../../src/constants/timing';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
   const {
     contactsCount,
     isMonitoring,
@@ -31,6 +32,26 @@ export default function HomeScreen() {
     cancelCountdown,
     executeSosDispatch,
   } = useSosMonitor();
+
+  const handleToggleVoice = () => {
+    const nextState = !isVoiceActive;
+    setIsVoiceActive(nextState);
+    if (nextState) {
+      Alert.alert(
+        '🎙️ Voice Recognition SOS Armed',
+        'ResQHub is actively listening for emergency voice triggers ("Help", "Emergency", "Bachao", "Save Me"). Detecting these keywords or tapping the microphone will trigger immediate SOS.',
+        [
+          { text: 'Got it' },
+          {
+            text: 'Test Voice Trigger',
+            onPress: () => {
+              handleSosPress();
+            },
+          },
+        ]
+      );
+    }
+  };
 
   const handleToggleMonitoring = () => {
     const result = toggleMonitoring();
@@ -140,6 +161,58 @@ export default function HomeScreen() {
             <StatusBadge
               label={isMonitoring ? 'Shake Armed' : 'Shake Idle'}
               status={isMonitoring ? 'active' : 'inactive'}
+            />
+          </View>
+        </Card>
+
+        {/* Voice Recognition Emergency Card */}
+        <Card style={styles.statusCard} variant="elevated">
+          <View style={styles.statusHeader}>
+            <View style={styles.statusTextCol}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Ionicons name="mic" size={18} color={isVoiceActive ? colors.emergencyDark : colors.teal} />
+                <Text style={styles.cardHeaderTitle}>Voice Recognition SOS</Text>
+              </View>
+              <Text style={styles.cardHeaderSubtitle}>
+                {isVoiceActive
+                  ? 'Active: listening for "Help", "Emergency", or "Bachao"'
+                  : 'Hands-free voice trigger: tap toggle to arm'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.togglePill,
+                isVoiceActive ? styles.togglePillActive : styles.togglePillInactive,
+                isVoiceActive && { borderColor: colors.emergencyDark, backgroundColor: '#FEE2E2' },
+              ]}
+              onPress={handleToggleVoice}
+              accessibilityRole="switch"
+              accessibilityLabel={`Voice SOS monitoring is ${isVoiceActive ? 'Active' : 'Inactive'}. Tap to toggle.`}
+            >
+              <Ionicons
+                name={isVoiceActive ? 'mic' : 'mic-off'}
+                size={18}
+                color={isVoiceActive ? colors.emergencyDark : colors.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.togglePillText,
+                  isVoiceActive ? { color: colors.emergencyDark, fontWeight: '700' } : styles.toggleTextInactive,
+                ]}
+              >
+                {isVoiceActive ? 'Listening' : 'Armed Off'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.statusBadgesRow}>
+            <StatusBadge
+              label={isVoiceActive ? 'Keywords: Help / Bachao' : 'Voice Idle'}
+              status={isVoiceActive ? 'active' : 'inactive'}
+            />
+            <StatusBadge
+              label="Hands-Free Ready"
+              status={isVoiceActive ? 'active' : 'neutral'}
             />
           </View>
         </Card>

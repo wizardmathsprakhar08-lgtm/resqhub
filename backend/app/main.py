@@ -80,3 +80,30 @@ def dashboard():
     if index_file.exists():
         return FileResponse(str(index_file))
     return JSONResponse(status_code=404, content={"message": "Dashboard UI not found"})
+
+
+@app.get(f"{settings.API_V1_STR}/download/apk", tags=["Mobile App"])
+def download_apk():
+    """
+    Direct download endpoint for the ResQHub Android APK installer.
+    """
+    possible_paths = [
+        static_dir / "resqhub.apk",
+        Path(__file__).resolve().parents[2] / "mobile" / "android" / "app" / "build" / "outputs" / "apk" / "release" / "app-release.apk",
+        Path(__file__).resolve().parents[2] / "mobile" / "android" / "app" / "build" / "outputs" / "apk" / "debug" / "app-debug.apk",
+    ]
+    for apk_path in possible_paths:
+        if apk_path.exists():
+            return FileResponse(
+                str(apk_path),
+                media_type="application/vnd.android.package-archive",
+                filename="ResQHub-Emergency.apk",
+            )
+    return JSONResponse(
+        status_code=404,
+        content={
+            "error": "APK not compiled yet",
+            "message": "To generate the standalone Android APK, run 'npm run build:apk' in the mobile directory or run mobile/build_apk.bat.",
+            "expo_go_url": "exp://10.42.217.217:8081",
+        },
+    )
