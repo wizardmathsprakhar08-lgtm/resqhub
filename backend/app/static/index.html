@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ResQHub — Emergency Command & Dispatch Portal</title>
   <link rel="icon" href="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shield-alert.svg" type="image/svg+xml">
+  <!-- Mobile PWA & Native App Installation -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#0A192F">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ResQHub">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Leaflet CSS & JS for interactive maps -->
@@ -397,45 +404,53 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Option 1: Instant Expo Go QR Code -->
-        <div class="bg-[#112240] p-4 rounded-xl border border-[#1E3A5F] flex flex-col items-center text-center space-y-3">
-          <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40">1. Instant On-Device Run</span>
-          <img id="expoQrCode" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=exp://10.42.217.217:8081" alt="Expo Go QR Code" class="w-36 h-36 rounded-lg border border-[#1E3A5F] bg-white p-1">
-          <div class="text-[11px] text-slate-300 space-y-1">
-            <p class="font-semibold text-white">Scan with Expo Go App</p>
-            <p class="text-slate-400 text-[10px]">Or enter URL in Expo Go:</p>
-            <code class="bg-[#0A192F] px-2 py-1 rounded text-teal-300 text-[10px] block font-mono">exp://10.42.217.217:8081</code>
-          </div>
-        </div>
-
-        <!-- Option 2: Standalone APK & PWA -->
+        <!-- Direct Option 1: Native Standalone APK Package -->
         <div class="bg-[#112240] p-4 rounded-xl border border-[#1E3A5F] flex flex-col justify-between space-y-3">
           <div>
-            <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40">2. Standalone Android APK</span>
-            <h4 class="font-semibold text-white text-xs mt-2">Download Native APK Installer</h4>
+            <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Direct Package (.APK)</span>
+            <h4 class="font-semibold text-white text-sm mt-2">Native Android APK File</h4>
             <p class="text-[11px] text-slate-300 mt-1 leading-relaxed">
-              Install the standalone Android application directly onto your smartphone without needing Expo Go.
+              Complete standalone package (7.5 MB). Download and install directly onto your Android device.
             </p>
           </div>
 
-          <div class="space-y-2">
-            <a href="/api/v1/download/apk" target="_blank" class="w-full py-2.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-md shadow-blue-600/30 transition-all">
-              <i data-lucide="download" class="w-4 h-4"></i>
-              <span>Download Android .APK</span>
-            </a>
+          <div class="flex flex-col items-center text-center space-y-2 pt-1">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=http://10.42.217.217:8000/api/v1/download/apk" alt="APK Download QR Code" class="w-28 h-28 rounded-lg border border-[#1E3A5F] bg-white p-1">
+            <span class="text-[10px] text-slate-400">Scan with phone camera to download</span>
 
-            <div class="p-2.5 bg-[#0A192F] rounded-lg text-[10px] text-slate-400 space-y-1">
-              <p class="text-slate-300 font-semibold">To trigger fresh cloud APK build:</p>
-              <code class="text-teal-300 block font-mono">double-click mobile/build_apk.bat</code>
-            </div>
+            <a href="/api/v1/download/apk" download="ResQHub-Emergency.apk" class="w-full py-2.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-600/30 transition-all">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Download ResQHub .APK (7.5 MB)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Direct Option 2: 1-Click Phone App Install -->
+        <div class="bg-[#112240] p-4 rounded-xl border border-[#1E3A5F] flex flex-col justify-between space-y-3">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40">1-Click Phone App</span>
+            <h4 class="font-semibold text-white text-sm mt-2">Install to Phone Home Screen</h4>
+            <p class="text-[11px] text-slate-300 mt-1 leading-relaxed">
+              Installs ResQHub directly as an app in your phone's app drawer with icon, offline mode, and full-screen UI.
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center text-center space-y-2 pt-1">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=http://10.42.217.217:8000/dashboard" alt="Mobile Dashboard QR Code" class="w-28 h-28 rounded-lg border border-[#1E3A5F] bg-white p-1">
+            <span class="text-[10px] text-slate-400">Scan to open on your phone</span>
+
+            <button onclick="triggerDirectInstall()" class="w-full py-2.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center justify-center space-x-1.5 shadow-md shadow-blue-600/30 transition-all">
+              <i data-lucide="smartphone" class="w-4 h-4"></i>
+              <span>📲 Install App on Phone Now</span>
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Quick Tips -->
       <div class="bg-[#070F1E] p-3 rounded-xl border border-[#1E3A5F] text-[11px] text-slate-400 flex items-start space-x-2">
-        <i data-lucide="info" class="w-4 h-4 text-teal-400 shrink-0 mt-0.5"></i>
-        <span>Once open on your phone, open <strong>Settings &rarr; Developer Settings</strong> and set the FastAPI Server URL to <code class="text-teal-300">http://10.42.217.217:8000/api/v1</code>.</span>
+        <i data-lucide="check-circle" class="w-4 h-4 text-teal-400 shrink-0 mt-0.5"></i>
+        <span>Both options install directly to your Android device without any third-party app stores or developer accounts.</span>
       </div>
     </div>
   </div>
@@ -453,6 +468,33 @@
 
     function closeInstallModal() {
       document.getElementById('installModal').classList.add('hidden');
+    }
+
+    // Service Worker & PWA Direct Installation
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js').catch(err => console.log('SW reg error:', err));
+      });
+    }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function triggerDirectInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            alert('🎉 ResQHub installed successfully on your device home screen!');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert('📲 Direct Android Installation:\n\n1. Open this website in Chrome on your phone.\n2. Tap the Chrome menu (⋮) in the top-right.\n3. Tap "Install App" or "Add to Home screen"!\n\nOr click "Download ResQHub .APK" above to install the standalone APK package directly!');
+      }
     }
 
     // Voice Recognition Engine

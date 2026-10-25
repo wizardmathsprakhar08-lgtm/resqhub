@@ -82,6 +82,7 @@ def dashboard():
     return JSONResponse(status_code=404, content={"message": "Dashboard UI not found"})
 
 
+@app.get("/apk", tags=["Mobile App"])
 @app.get(f"{settings.API_V1_STR}/download/apk", tags=["Mobile App"])
 def download_apk():
     """
